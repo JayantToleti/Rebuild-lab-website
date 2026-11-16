@@ -1,0 +1,38 @@
+# Project registry: source of truth for discovery pages.
+# Validated by lib/schema.ts at build time (npm run validate:content).
+# repository URLs must start with https://github.com/<GITHUB_ORG>/ (lib/site.ts).
+- id: R001
+  title: ResNet from Scratch
+  slug: resnet-from-scratch
+  category: ai-ml
+  classification: [reproduction]
+  status: PLANNED
+  languages: [Python]
+  frameworks: [PyTorch]
+  references:
+    - https://arxiv.org/abs/1512.03385
+  repository: https://github.com/rebuild-lab/resnet-reproduction
+  featured: true
+
+- id: S001
+  title: URL Shortener
+  slug: url-shortener
+  category: system-design
+  classification: [recreation]
+  status: PLANNED
+  languages: [Go]
+  frameworks: [PostgreSQL]
+  references: []
+  repository: https://github.com/rebuild-lab/url-shortener
+
+- id: R003
+  title: Transformer from Scratch
+  slug: transformer-from-scratch
+  category: ai-ml
+  classification: [reproduction]
+  status: PLANNED
+  languages: [Python]
+  frameworks: [PyTorch]
+  references:
+    - https://arxiv.org/abs/1706.03762
+  repository: https://github.com/rebuild-lab/transformer-from-scratch
