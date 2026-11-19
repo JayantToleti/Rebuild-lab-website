@@ -58,13 +58,17 @@ A static-first technical-publication site, turned from the create-next-app start
 - `/about`: operating principles, scope boundaries, hardware disclosure (Windows laptop, 12 GB RAM, RTX 3050 laptop GPU with 4 GB VRAM), evidence standard.
 - `/contribute`: lifecycle phases 0–10, the three workflows, issue taxonomy (marked DRAFT), reproduction gates, licensing (MIT code, CC BY 4.0 docs), security placeholder.
 
+### Sub-Task 7 — CI, README, final verification
+- `.github/workflows/website-ci.yml`: runs on pull requests and pushes to `main`; Node from `.nvmrc` with npm cache; `npm ci`, typecheck, lint, `validate:content`, tests, build.
+- `README.md` rewritten (purpose, routes, scripts, adding a project, 7-block convention, Mermaid, deployment, gotchas).
+
 ## Verification status
 
-At the end of Sub-Task 6: typecheck, lint, 40 unit tests, `validate:content` and `build` all pass with no warnings. The build produces 19 static pages. Pages were checked via `curl` against the dev server and by inspecting `out/`; they have not been reviewed in a browser. The Mermaid SVG render in a browser is untested.
+At the end of Sub-Task 7: typecheck, lint, 40 unit tests, `validate:content` and `build` all pass with no warnings. The build produces 19 static pages. `out/` contains HTML for `/`, `/explore`, `/about`, `/contribute`, 9 lab pages and 3 project pages. A one-off check of all 143 internal links in `out/*.html` (including anchors) found none broken. With an invalid `status` in `projects.yaml`, both `validate:content` and `build` fail (file restored and confirmed unchanged). The CI workflow has not yet run on GitHub. Pages have not been reviewed in a browser, and the Mermaid SVG render in a browser is untested.
 
 ## Not done yet
 
-- **Sub-Task 7**: `.github/workflows/website-ci.yml`, README rewrite (still the create-next-app boilerplate), final verification run.
+- Run the CI workflow once on GitHub (it has not run yet) and review the pages in a browser, including the Mermaid SVG render.
 - Placeholders to revisit: the draft issue taxonomy, the security contact (`SECURITY.md` per repo, no address yet), and the provisional `rebuild-lab` GitHub org handle.
 - Deferred by design: `/labs` index, `/research`, `/benchmarks`, `/notes`, `/status`, search, Recharts charts, demos, and the remaining 13 catalogue projects.
 

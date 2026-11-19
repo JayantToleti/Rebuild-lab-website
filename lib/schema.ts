@@ -38,38 +38,21 @@ export type Project = z.infer<typeof projectSchema>;
 
 // Whole-file schema: per-entry validation plus cross-entry rules.
 export const projectsFileSchema = z.array(projectSchema).check((ctx) => {
-  const ids = new Map<string, number>();
-  const slugs = new Map<string, number>();
+  const seen = { id: new Map<string, number>(), slug: new Map<string, number>() };
+  const fail = (message: string, input: string, path: (string | number)[]) =>
+    ctx.issues.push({ code: "custom", message, input, path });
   ctx.value.forEach((p, i) => {
-    const firstId = ids.get(p.id);
-    if (firstId !== undefined) {
-      ctx.issues.push({
-        code: "custom",
-        message: `duplicate id "${p.id}" (first used at index ${firstId})`,
-        input: p.id,
-        path: [i, "id"],
-      });
-    } else {
-      ids.set(p.id, i);
-    }
-    const firstSlug = slugs.get(p.slug);
-    if (firstSlug !== undefined) {
-      ctx.issues.push({
-        code: "custom",
-        message: `duplicate slug "${p.slug}" (first used at index ${firstSlug})`,
-        input: p.slug,
-        path: [i, "slug"],
-      });
-    } else {
-      slugs.set(p.slug, i);
+    for (const key of ["id", "slug"] as const) {
+      const first = seen[key].get(p[key]);
+      if (first === undefined) seen[key].set(p[key], i);
+      else fail(`duplicate ${key} "${p[key]}" (first used at index ${first})`, p[key], [i, key]);
     }
     if (!p.repository.startsWith(REPOSITORY_PREFIX)) {
-      ctx.issues.push({
-        code: "custom",
-        message: `repository must start with ${REPOSITORY_PREFIX} (GITHUB_ORG in lib/site.ts)`,
-        input: p.repository,
-        path: [i, "repository"],
-      });
+      fail(
+        `repository must start with ${REPOSITORY_PREFIX} (GITHUB_ORG in lib/site.ts)`,
+        p.repository,
+        [i, "repository"],
+      );
     }
   });
 });

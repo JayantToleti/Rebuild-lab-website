@@ -1,9 +1,5 @@
 import type { Status } from "@/lib/taxonomy";
 
-// Re-exported so existing importers keep working; the source of truth is lib/taxonomy.ts.
-export { STATUSES } from "@/lib/taxonomy";
-export type { Status } from "@/lib/taxonomy";
-
 // Differentiation is by label text and border style, not colour alone.
 const STYLE: Record<Status, string> = {
   PLANNED: "border-dashed text-muted",

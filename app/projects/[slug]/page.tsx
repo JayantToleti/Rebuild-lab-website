@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ClassificationBadge } from "@/components/ClassificationBadge";
 import { PageHeading } from "@/components/PageHeading";
+import { H2 } from "@/components/Section";
 import { StatusBadge } from "@/components/StatusBadge";
 import { MDX_BLOCKS } from "@/lib/content-check";
 import { getLab } from "@/lib/labs";
@@ -30,8 +31,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       } laboratory (${project.status}).`,
   };
 }
-
-const H2 = "mb-3 border-b pb-1 text-lg font-semibold";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (

@@ -265,7 +265,16 @@ Turn the current create-next-app starter into a static-first technical-publicati
 
 **Relevant Context:** Proposal §13.2, §13.5; `.nvmrc`; existing `out/` and `.next/` (git-ignored build output).
 
-**Status:** [ ] pending
+**Status:** [x] done
+
+**Completion notes:**
+- `.github/workflows/website-ci.yml`: triggers `pull_request` and `push` to `main`; one `verify` job on `ubuntu-latest` with `actions/checkout@v4`, `actions/setup-node@v4` (`node-version-file: .nvmrc`, `cache: npm`), then `npm ci`, `typecheck`, `lint`, `validate:content`, `npm test -- --run`, `npm run build`. The workflow has not run on GitHub yet (nothing committed or pushed).
+- `README.md` rewritten: purpose and stack, the six routes, scripts, adding a project (field table from `lib/schema.ts`, `GITHUB_ORG` repository rule, optional MDX), the 7-block convention, Mermaid fences, deployment (static `out/`, Vercel or Cloudflare Pages), gotchas (rolldown binding fix, dev-server registry cache, build validating YAML only via pages so CI also runs `validate:content`, string-name MDX plugins). It states that the `rebuild-lab` org handle is provisional.
+- Full chain passed with no warnings: typecheck, lint, `validate:content` (3 projects, 1 MDX record), 40 tests, build (19 static pages).
+- `out/` has HTML for `/`, `/explore`, `/about`, `/contribute`, 9 `labs/<slug>.html` and 3 `projects/<slug>.html` (plus `404.html` and `_not-found.html`). A throwaway internal-link check over all 18 `out/*.html` files (143 internal `href`s, including `#anchor` targets) found 0 broken links. No script was added to the repo.
+- Negative check: with `status: BOGUS` on R001, `validate:content` exited 1 and `next build` failed ("Failed to collect page data for /projects/[slug]", with the invalid-status issue). `content/projects.yaml` was restored and `git diff` shows it unchanged. A final rebuild passed.
+- Nothing was committed or pushed. Changes are left uncommitted for review.
+- Still open: browser check of the Mermaid SVG render and general visual review; the draft issue taxonomy; the security contact; the provisional org handle.
 
 ---
 

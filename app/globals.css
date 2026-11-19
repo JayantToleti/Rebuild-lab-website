@@ -11,6 +11,7 @@
   --surface: #f6f6f7;
   --border: #d4d4d8;
   --accent: #1d4ed8;
+  color-scheme: light dark;
 }
 
 @media (prefers-color-scheme: dark) {

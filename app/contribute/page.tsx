@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { ClassificationBadge } from "@/components/ClassificationBadge";
 import { DataTable, Td, Th } from "@/components/DataTable";
 import { PageHeading } from "@/components/PageHeading";
+import { Bullets, H3, Section } from "@/components/Section";
 import { StatusBadge } from "@/components/StatusBadge";
 import { LABS } from "@/lib/labs";
 import { SITE } from "@/lib/site";
-import { CLASSIFICATIONS, STATUSES } from "@/lib/taxonomy";
+import { CLASSIFICATIONS, STATUSES, type Classification } from "@/lib/taxonomy";
 
 export const metadata: Metadata = {
   title: "Contribute",
@@ -14,76 +16,18 @@ export const metadata: Metadata = {
     "Standards and protocols: contribution lifecycle, issue taxonomy (draft), reproduction gates, licensing expectations and security reporting.",
 };
 
-const H2 = "mb-3 border-b pb-1 text-lg font-semibold";
-const H3 = "mb-1 font-mono text-sm uppercase text-muted";
-
 const LIFECYCLE: [string, string, string, string][] = [
-  [
-    "0",
-    "Intake",
-    "Select a paper, system, protocol, algorithm or original problem. Define audience and value.",
-    "Project brief, classification, domain, owner and initial scope.",
-  ],
-  [
-    "1",
-    "Research",
-    "Read primary sources, specifications, related implementations and known limitations.",
-    "Reference list, notes, terminology and behaviour requirements.",
-  ],
-  [
-    "2",
-    "Scope",
-    "Define included and excluded functionality, scale, assumptions and success criteria.",
-    "Scope statement and acceptance criteria.",
-  ],
-  [
-    "3",
-    "Design",
-    "Choose architecture, components, interfaces, data flow and technology.",
-    "Architecture diagram and design-decision record.",
-  ],
-  [
-    "4",
-    "Plan",
-    "Break work into milestones and tasks. Identify risks and dependencies.",
-    "Implementation plan and issue list.",
-  ],
-  [
-    "5",
-    "Build",
-    "Implement a minimal vertical slice, then add features incrementally.",
-    "Working implementation with reproducible setup.",
-  ],
-  [
-    "6",
-    "Verify",
-    "Unit, integration, property, regression and failure tests as appropriate.",
-    "Automated tests and test evidence.",
-  ],
-  [
-    "7",
-    "Evaluate",
-    "Run experiments, benchmarks, ablations or behaviour comparisons.",
-    "Raw results, analysis, charts and methodology.",
-  ],
-  [
-    "8",
-    "Document",
-    "Explain architecture, implementation, operation, deviations and limitations.",
-    "Complete project engineering record.",
-  ],
-  [
-    "9",
-    "Publish",
-    "Release code, link project page, set status, licence and contribution path.",
-    "Public repository and website entry.",
-  ],
-  [
-    "10",
-    "Maintain",
-    "Triage issues, update dependencies, correct findings and retire obsolete demos.",
-    "Changelog, maintenance status and follow-up issues.",
-  ],
+  ["0", "Intake", "Select a paper, system, protocol, algorithm or original problem. Define audience and value.", "Project brief, classification, domain, owner and initial scope."],
+  ["1", "Research", "Read primary sources, specifications, related implementations and known limitations.", "Reference list, notes, terminology and behaviour requirements."],
+  ["2", "Scope", "Define included and excluded functionality, scale, assumptions and success criteria.", "Scope statement and acceptance criteria."],
+  ["3", "Design", "Choose architecture, components, interfaces, data flow and technology.", "Architecture diagram and design-decision record."],
+  ["4", "Plan", "Break work into milestones and tasks. Identify risks and dependencies.", "Implementation plan and issue list."],
+  ["5", "Build", "Implement a minimal vertical slice, then add features incrementally.", "Working implementation with reproducible setup."],
+  ["6", "Verify", "Unit, integration, property, regression and failure tests as appropriate.", "Automated tests and test evidence."],
+  ["7", "Evaluate", "Run experiments, benchmarks, ablations or behaviour comparisons.", "Raw results, analysis, charts and methodology."],
+  ["8", "Document", "Explain architecture, implementation, operation, deviations and limitations.", "Complete project engineering record."],
+  ["9", "Publish", "Release code, link project page, set status, licence and contribution path.", "Public repository and website entry."],
+  ["10", "Maintain", "Triage issues, update dependencies, correct findings and retire obsolete demos.", "Changelog, maintenance status and follow-up issues."],
 ];
 
 const REPRODUCTION: string[] = [
@@ -107,6 +51,15 @@ const RECREATION: string[] = [
   "Measure throughput, latency, memory and resource use under declared conditions.",
   "Compare design choices with documented behaviour of the original system.",
   "Label the result as an educational or experimental implementation, not an official replacement.",
+];
+
+const GATES: string[] = [
+  "The exact paper version, venue and supplementary material are identified.",
+  "A reproduction matrix separates paper-reported settings from local implementation settings.",
+  "Tensor shapes and intermediate behaviour are validated, and a smoke test passes on a tiny dataset or short schedule.",
+  "A baseline experiment ran with a fixed seed and a saved configuration, before any ablation.",
+  "Comparison with the paper accounts for dataset, compute, hardware, precision and training budget differences.",
+  "Deviations and confidence limits are published; exact reproduction is not implied where conditions differ.",
 ];
 
 const LICENCE_ROWS: [string, string][] = [
@@ -135,6 +88,49 @@ const SECURITY_RULES: string[] = [
 ];
 
 export default function ContributePage() {
+  const pill = "border px-1.5 py-px font-mono text-xs leading-tight text-muted";
+  const taxonomy: [string, string, ReactNode[]][] = [
+    [
+      "classification:*",
+      "Registry classification",
+      CLASSIFICATIONS.map((c) => <ClassificationBadge key={c} classification={c} />),
+    ],
+    [
+      "status:*",
+      "Registry status",
+      STATUSES.map((s) => <StatusBadge key={s} status={s} />),
+    ],
+    [
+      "lab:*",
+      "Registry category (laboratory)",
+      LABS.map((l) => (
+        <span key={l.slug} className={pill}>
+          {l.slug}
+        </span>
+      )),
+    ],
+  ];
+  const workflows: [Classification, string, string, ReactNode][] = [
+    [
+      "reproduction",
+      "Reproduction",
+      "Reimplementation or experimental reproduction of published research, algorithms or documented methods.",
+      <Bullets key="r" ordered items={REPRODUCTION} className="mb-6" />,
+    ],
+    [
+      "recreation",
+      "Software recreation",
+      "Independent implementation of the core functionality of an existing application, protocol, infrastructure component or software system.",
+      <Bullets key="s" ordered items={RECREATION} className="mb-6" />,
+    ],
+    [
+      "original-work",
+      "Original work",
+      "Original work begins with a specific problem and a testable hypothesis or design objective. It records baseline behaviour, proposed change, evaluation plan, results, failed approaches and conclusions. A novel claim is made only when supported by a reproducible evaluation.",
+      null,
+    ],
+  ];
+
   return (
     <>
       <PageHeading title="Standards & Protocols" eyebrow="Contribute">
@@ -143,10 +139,7 @@ export default function ContributePage() {
         contribution.
       </PageHeading>
 
-      <section aria-labelledby="lifecycle" className="mb-8">
-        <h2 id="lifecycle" className={H2}>
-          Contribution lifecycle
-        </h2>
+      <Section id="lifecycle" title="Contribution lifecycle">
         <p className="mb-3 max-w-3xl">
           Every project follows the same lifecycle, with project-specific depth.
           Each phase has a required output that acts as its gate.
@@ -171,61 +164,35 @@ export default function ContributePage() {
             ))}
           </tbody>
         </DataTable>
-      </section>
+      </Section>
 
-      <section aria-labelledby="workflows" className="mb-8">
-        <h2 id="workflows" className={H2}>
-          Workflows by classification
-        </h2>
+      <Section id="workflows" title="Workflows by classification">
         <p className="mb-4 max-w-3xl">
           A project may carry more than one classification. Each classification
           has its own workflow.
         </p>
+        {workflows.map(([c, name, intro, steps]) => (
+          <div key={c}>
+            <h3 className={`${H3} flex items-center gap-2`}>
+              <ClassificationBadge classification={c} /> {name}
+            </h3>
+            <p className={`max-w-3xl ${steps ? "mb-2" : ""}`}>{intro}</p>
+            {steps}
+          </div>
+        ))}
+      </Section>
 
-        <h3 className={`${H3} flex items-center gap-2`}>
-          <ClassificationBadge classification="reproduction" /> Reproduction
-        </h3>
-        <p className="mb-2 max-w-3xl">
-          Reimplementation or experimental reproduction of published research,
-          algorithms or documented methods.
-        </p>
-        <ol className="mb-6 max-w-3xl list-decimal space-y-1 pl-5">
-          {REPRODUCTION.map((s) => (
-            <li key={s}>{s}</li>
-          ))}
-        </ol>
-
-        <h3 className={`${H3} flex items-center gap-2`}>
-          <ClassificationBadge classification="recreation" /> Software recreation
-        </h3>
-        <p className="mb-2 max-w-3xl">
-          Independent implementation of the core functionality of an existing
-          application, protocol, infrastructure component or software system.
-        </p>
-        <ol className="mb-6 max-w-3xl list-decimal space-y-1 pl-5">
-          {RECREATION.map((s) => (
-            <li key={s}>{s}</li>
-          ))}
-        </ol>
-
-        <h3 className={`${H3} flex items-center gap-2`}>
-          <ClassificationBadge classification="original-work" /> Original work
-        </h3>
-        <p className="max-w-3xl">
-          Original work begins with a specific problem and a testable hypothesis
-          or design objective. It records baseline behaviour, proposed change,
-          evaluation plan, results, failed approaches and conclusions. A novel
-          claim is made only when supported by a reproducible evaluation.
-        </p>
-      </section>
-
-      <section aria-labelledby="taxonomy" className="mb-8">
-        <h2 id="taxonomy" className={H2}>
-          Issue taxonomy{" "}
-          <span className="ml-1 border border-dashed px-1.5 py-px align-middle font-mono text-xs font-normal text-muted">
-            DRAFT
-          </span>
-        </h2>
+      <Section
+        id="taxonomy"
+        title={
+          <>
+            Issue taxonomy{" "}
+            <span className="ml-1 border border-dashed px-1.5 py-px align-middle font-mono text-xs font-normal text-muted">
+              DRAFT
+            </span>
+          </>
+        }
+      >
         <p className="mb-3 max-w-3xl border border-dashed p-3 text-sm text-muted">
           Draft. The founding proposal does not define an issue taxonomy. The
           labels below are derived from the classification, status and
@@ -240,84 +207,31 @@ export default function ContributePage() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <Td className="font-mono text-xs">classification:*</Td>
-              <Td>
-                <ul className="flex flex-wrap gap-2">
-                  {CLASSIFICATIONS.map((c) => (
-                    <li key={c}>
-                      <ClassificationBadge classification={c} />
-                    </li>
-                  ))}
-                </ul>
-              </Td>
-              <Td className="text-muted">Registry classification</Td>
-            </tr>
-            <tr>
-              <Td className="font-mono text-xs">status:*</Td>
-              <Td>
-                <ul className="flex flex-wrap gap-2">
-                  {STATUSES.map((s) => (
-                    <li key={s}>
-                      <StatusBadge status={s} />
-                    </li>
-                  ))}
-                </ul>
-              </Td>
-              <Td className="text-muted">Registry status</Td>
-            </tr>
-            <tr>
-              <Td className="font-mono text-xs">lab:*</Td>
-              <Td>
-                <ul className="flex flex-wrap gap-2">
-                  {LABS.map((l) => (
-                    <li
-                      key={l.slug}
-                      className="border px-1.5 py-px font-mono text-xs leading-tight text-muted"
-                    >
-                      {l.slug}
-                    </li>
-                  ))}
-                </ul>
-              </Td>
-              <Td className="text-muted">Registry category (laboratory)</Td>
-            </tr>
+            {taxonomy.map(([group, source, values]) => (
+              <tr key={group}>
+                <Td className="font-mono text-xs">{group}</Td>
+                <Td>
+                  <ul className="flex flex-wrap gap-2">
+                    {values.map((v, i) => (
+                      <li key={i}>{v}</li>
+                    ))}
+                  </ul>
+                </Td>
+                <Td className="text-muted">{source}</Td>
+              </tr>
+            ))}
           </tbody>
         </DataTable>
-      </section>
+      </Section>
 
-      <section aria-labelledby="gates" className="mb-8">
-        <h2 id="gates" className={H2}>
-          Reproduction gates
-        </h2>
+      <Section id="gates" title="Reproduction gates">
         <p className="mb-2 max-w-3xl">
           A reproduction is not reported as complete until each of these holds:
         </p>
         <ul className="max-w-3xl list-disc space-y-1 pl-5">
-          <li>
-            The exact paper version, venue and supplementary material are
-            identified.
-          </li>
-          <li>
-            A reproduction matrix separates paper-reported settings from local
-            implementation settings.
-          </li>
-          <li>
-            Tensor shapes and intermediate behaviour are validated, and a smoke
-            test passes on a tiny dataset or short schedule.
-          </li>
-          <li>
-            A baseline experiment ran with a fixed seed and a saved
-            configuration, before any ablation.
-          </li>
-          <li>
-            Comparison with the paper accounts for dataset, compute, hardware,
-            precision and training budget differences.
-          </li>
-          <li>
-            Deviations and confidence limits are published; exact reproduction
-            is not implied where conditions differ.
-          </li>
+          {GATES.map((g) => (
+            <li key={g}>{g}</li>
+          ))}
           <li>
             Results meet the{" "}
             <Link href="/about#evidence" className="text-accent underline">
@@ -330,12 +244,9 @@ export default function ContributePage() {
             .
           </li>
         </ul>
-      </section>
+      </Section>
 
-      <section aria-labelledby="licensing" className="mb-8">
-        <h2 id="licensing" className={H2}>
-          Licensing expectations
-        </h2>
+      <Section id="licensing" title="Licensing expectations">
         <div className="mb-3">
           <DataTable>
             <tbody>
@@ -350,17 +261,10 @@ export default function ContributePage() {
             </tbody>
           </DataTable>
         </div>
-        <ul className="max-w-3xl list-disc space-y-1 pl-5">
-          {LICENCE_RULES.map((r) => (
-            <li key={r}>{r}</li>
-          ))}
-        </ul>
-      </section>
+        <Bullets items={LICENCE_RULES} />
+      </Section>
 
-      <section aria-labelledby="security">
-        <h2 id="security" className={H2}>
-          Security reporting
-        </h2>
+      <Section id="security" title="Security reporting" last>
         <p className="mb-3 max-w-3xl border border-dashed p-3 text-sm text-muted">
           Placeholder. Each repository describes a private reporting route and
           response expectations in its own <code className="font-mono">SECURITY.md</code>.
@@ -369,14 +273,9 @@ export default function ContributePage() {
           <a href={SITE.githubUrl} className="text-accent underline">
             github.com/{SITE.githubOrg}
           </a>
-         
         </p>
-        <ul className="max-w-3xl list-disc space-y-1 pl-5">
-          {SECURITY_RULES.map((r) => (
-            <li key={r}>{r}</li>
-          ))}
-        </ul>
-      </section>
+        <Bullets items={SECURITY_RULES} />
+      </Section>
     </>
   );
 }

@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
 import { DataTable, Td, Th } from "@/components/DataTable";
 import { PageHeading } from "@/components/PageHeading";
+import { Bullets, H3, Section } from "@/components/Section";
 
 export const metadata: Metadata = {
   title: "About",
   description:
     "Charter and baseline: operating principles, scope boundaries, local hardware constraints and the evidence standard.",
 };
-
-const H2 = "mb-3 border-b pb-1 text-lg font-semibold";
 
 const PRINCIPLES: [string, string][] = [
   [
@@ -54,6 +53,20 @@ const HARDWARE: [string, string][] = [
   ["Memory", "12 GB RAM"],
   ["GPU", "NVIDIA RTX 3050 laptop GPU"],
   ["VRAM", "4 GB"],
+];
+
+const PRACTICE: string[] = [
+  "Use small, reproducible baselines before attempting larger runs.",
+  "Keep dataset and model artefacts outside Git; document download and checksum steps.",
+  "Treat memory limits as explicit experimental constraints, not as hidden implementation details.",
+];
+
+const NOT_PUBLISHED: string[] = [
+  "stolen source code",
+  "secrets or private data",
+  "authentication bypasses",
+  "DRM circumvention instructions",
+  "exploit workflows targeting systems without authorisation",
 ];
 
 const SIZING: string[] = [
@@ -105,10 +118,7 @@ export default function AboutPage() {
         that every project is held to.
       </PageHeading>
 
-      <section aria-labelledby="principles" className="mb-8">
-        <h2 id="principles" className={H2}>
-          Operating principles
-        </h2>
+      <Section id="principles" title="Operating principles">
         <DataTable>
           <thead>
             <tr>
@@ -125,35 +135,23 @@ export default function AboutPage() {
             ))}
           </tbody>
         </DataTable>
-      </section>
+      </Section>
 
-      <section aria-labelledby="scope" className="mb-8">
-        <h2 id="scope" className={H2}>
-          Scope boundaries
-        </h2>
+      <Section id="scope" title="Scope boundaries">
         <p className="mb-3 max-w-3xl">
           The platform may study commercial products and proprietary systems at
           the level of publicly documented behaviour, permitted APIs,
           interoperability and lawful testing.
         </p>
         <p className="mb-2 max-w-3xl">It does not publish:</p>
-        <ul className="mb-3 max-w-3xl list-disc space-y-1 pl-5">
-          <li>stolen source code</li>
-          <li>secrets or private data</li>
-          <li>authentication bypasses</li>
-          <li>DRM circumvention instructions</li>
-          <li>exploit workflows targeting systems without authorisation</li>
-        </ul>
+        <Bullets items={NOT_PUBLISHED} className="mb-3" />
         <p className="max-w-3xl">
           Projects that involve security research require a written scope, a
           safe test environment and responsible disclosure where applicable.
         </p>
-      </section>
+      </Section>
 
-      <section aria-labelledby="hardware" className="mb-8">
-        <h2 id="hardware" className={H2}>
-          Local hardware constraint disclosure
-        </h2>
+      <Section id="hardware" title="Local hardware constraint disclosure">
         <p className="mb-3 max-w-3xl">
           The initial local development environment is the machine below. Full-scale
           reproduction is not claimed when compute or data scale is materially
@@ -174,36 +172,16 @@ export default function AboutPage() {
           </DataTable>
         </div>
 
-        <h3 className="mb-1 font-mono text-sm uppercase text-muted">
-          Experiment sizing
-        </h3>
+        <h3 className={H3}>Experiment sizing</h3>
         <p className="mb-2 max-w-3xl">
           ML projects are designed around this limit, using:
         </p>
-        <ul className="mb-4 max-w-3xl list-disc space-y-1 pl-5">
-          {SIZING.map((s) => (
-            <li key={s}>{s}</li>
-          ))}
-        </ul>
+        <Bullets items={SIZING} className="mb-4" />
 
-        <h3 className="mb-1 font-mono text-sm uppercase text-muted">
-          Practice
-        </h3>
-        <ul className="mb-4 max-w-3xl list-disc space-y-1 pl-5">
-          <li>Use small, reproducible baselines before attempting larger runs.</li>
-          <li>
-            Keep dataset and model artefacts outside Git; document download and
-            checksum steps.
-          </li>
-          <li>
-            Treat memory limits as explicit experimental constraints, not as
-            hidden implementation details.
-          </li>
-        </ul>
+        <h3 className={H3}>Practice</h3>
+        <Bullets items={PRACTICE} className="mb-4" />
 
-        <h3 className="mb-1 font-mono text-sm uppercase text-muted">
-          Recorded for every run
-        </h3>
+        <h3 className={H3}>Recorded for every run</h3>
         <ul className="flex flex-wrap gap-2">
           {RECORDED.map((r) => (
             <li key={r} className="border px-1.5 py-px font-mono text-xs">
@@ -211,12 +189,9 @@ export default function AboutPage() {
             </li>
           ))}
         </ul>
-      </section>
+      </Section>
 
-      <section aria-labelledby="evidence">
-        <h2 id="evidence" className={H2}>
-          Evidence standard
-        </h2>
+      <Section id="evidence" title="Evidence standard" last>
         <p className="mb-2 max-w-3xl">
           Every benchmark or experiment must state:
         </p>
@@ -228,12 +203,8 @@ export default function AboutPage() {
         <p className="mb-4 max-w-3xl">
           A chart without methodology is not accepted as benchmark evidence.
         </p>
-        <ul className="max-w-3xl list-disc space-y-1 pl-5">
-          {EVIDENCE_RULES.map((r) => (
-            <li key={r}>{r}</li>
-          ))}
-        </ul>
-      </section>
+        <Bullets items={EVIDENCE_RULES} />
+      </Section>
     </>
   );
 }
